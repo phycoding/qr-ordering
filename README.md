@@ -1,79 +1,21 @@
-# SwiftServe AI - QR Ordering Platform MVP
+# SwiftServe AI - QR Ordering Platform
 
-## 🚀 Overview
+## 🎉 Major Update: Separate Customer & Restaurant Platforms
 
-SwiftServe AI is a commission-free, AI-enhanced QR-based ordering platform designed to overcome existing user experience and hospitality friction points in the Indian market. This MVP demonstrates the core functionality with a React frontend and FastAPI backend.
+The application has been completely restructured into dedicated platforms for customers and restaurants, featuring modern ReactBits components and a scalable architecture.
 
-## ✨ Key Features
-
-### Customer Experience
-- **QR Code Ordering**: Seamless menu browsing and ordering
-- **AI Recommendations**: Smart dish suggestions based on preferences
-- **Custom Instructions**: Natural language customization processing
-- **Real-time Cart**: Persistent cart with order summary
-- **UPI Payment Integration**: Mock payment processing
-
-### Restaurant Management
-- **Kitchen Display System (KDS)**: Real-time order management
-- **AI Instruction Translation**: Converts customer requests to kitchen instructions
-- **Server Action Prompts**: AI-generated hospitality suggestions
-- **Order Status Tracking**: From preparation to completion
-- **Analytics Dashboard**: Order insights and revenue tracking
-
-## 🛠 Technology Stack
-
-### Frontend
-- **React 18** with Hooks
-- **Material UI (MUI)** for professional styling
-- **ReactBits.dev** components for enhanced UX
-- **Firebase Firestore** for real-time data
-
-### Backend
-- **FastAPI** for high-performance API
-- **Pydantic** for data validation
-- **Uvicorn** ASGI server
-- **AI Mock Services** for customization and suggestions
-
-## 📁 Project Structure
-
-```
-qr-ordering/
-├── App.jsx                 # Single-file React application
-├── main.py                 # Single-file FastAPI backend
-├── package.json            # React dependencies
-├── requirements.txt        # Python dependencies
-├── public/
-│   └── index.html         # HTML template
-└── README.md              # This file
-```
+---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js 16+ and npm
-- Python 3.8+
+- Python 3.8+ (for backend)
 - Modern web browser
 
-### Backend Setup
+### Installation
 
-1. **Install Python dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. **Start the FastAPI server:**
-   ```bash
-   python main.py
-   ```
-   
-   The backend will be available at: `http://127.0.0.1:8000`
-   
-   - API Documentation: `http://127.0.0.1:8000/docs`
-   - Health Check: `http://127.0.0.1:8000/api/health`
-
-### Frontend Setup
-
-1. **Install React dependencies:**
+1. **Install dependencies:**
    ```bash
    npm install
    ```
@@ -82,123 +24,325 @@ qr-ordering/
    ```bash
    npm start
    ```
-   
-   The frontend will be available at: `http://localhost:3000`
 
-## 🎯 Usage Guide
+3. **Access the platforms:**
+   - Customer Platform: `http://localhost:3000/customer`
+   - Restaurant Platform: `http://localhost:3000/restaurant`
 
-### Customer View (Default)
-1. Browse the AI-curated menu with category filters
-2. Look for "AI Recommended" badges on suggested dishes
-3. Add items to cart with the "Add to Cart" button
-4. Click "View Cart" to review your order
-5. Add special instructions in natural language (e.g., "make it less spicy, extra cheese")
-6. Place your order and receive confirmation
+---
 
-### Restaurant View
-1. Toggle to "Restaurant View" using the switch in the header
-2. **Kitchen Display System:**
-   - View all active orders in real-time
-   - See customer instructions translated to kitchen format
-   - Update order status (New → Preparing → Ready → Completed)
-3. **Server Actions Panel:**
-   - Monitor AI-generated hospitality prompts
-   - Act on time-sensitive customer service suggestions
-4. **Analytics:**
-   - Track active orders and daily revenue
+## 📁 New Project Structure
 
-### AI Features Demo
+```
+qr-ordering/
+├── src/
+│   ├── App.jsx                          # Main app with routing
+│   ├── index.js                         # Entry point
+│   │
+│   ├── customer/                        # Customer Platform
+│   │   ├── CustomerApp.jsx             # Customer wrapper
+│   │   ├── pages/
+│   │   │   ├── HomePage.jsx            # Menu browsing ✅
+│   │   │   ├── CartPage.jsx            # Shopping cart ✅
+│   │   │   ├── CheckoutPage.jsx        # Checkout (Coming Soon)
+│   │   │   ├── OrderHistoryPage.jsx    # Order history (Coming Soon)
+│   │   │   └── OrderTrackingPage.jsx   # Order tracking (Coming Soon)
+│   │   └── components/                  # Customer-specific components
+│   │
+│   ├── restaurant/                      # Restaurant Platform
+│   │   ├── RestaurantApp.jsx           # Restaurant wrapper with sidebar
+│   │   ├── pages/
+│   │   │   ├── DashboardPage.jsx       # Analytics dashboard ✅
+│   │   │   ├── KitchenDisplayPage.jsx  # KDS (Coming Soon)
+│   │   │   ├── OrderManagementPage.jsx # Order management (Coming Soon)
+│   │   │   ├── MenuManagementPage.jsx  # Menu CRUD (Coming Soon)
+│   │   │   └── AnalyticsPage.jsx       # Detailed analytics (Coming Soon)
+│   │   └── components/                  # Restaurant-specific components
+│   │
+│   ├── shared/                          # Shared Components & Services
+│   │   ├── components/
+│   │   │   ├── reactbits/              # ReactBits components
+│   │   │   │   ├── AnimatedButton.jsx  ✅
+│   │   │   │   ├── Card.jsx            ✅
+│   │   │   │   ├── Toast.jsx           ✅
+│   │   │   │   └── Tabs.jsx            ✅
+│   │   │   └── ComingSoon.jsx          # Placeholder component
+│   │   ├── context/
+│   │   │   ├── CartContext.jsx         # Cart state management ✅
+│   │   │   └── OrderContext.jsx        # Order state management ✅
+│   │   ├── hooks/                       # Custom React hooks
+│   │   └── services/
+│   │       ├── firebase.js             # Firebase config ✅
+│   │       ├── api.js                  # API service ✅
+│   │       └── ai.js                   # AI service ✅
+│   │
+│   ├── styles/
+│   │   └── index.css                   # Global styles ✅
+│   │
+│   └── utils/
+│       └── constants.js                # App constants ✅
+│
+├── public/
+│   └── index.html
+├── package.json
+└── README.md
+```
 
-**Customization Processing:**
-- Customer input: "make it not too spicy please and add extra paneer"
-- AI output: "KITCHEN: SPICE LEVEL: LOW. ADD-ON: PANEER (Extra)"
+---
 
-**Server Suggestions:**
-- "Table 3: Suggest today's dessert special - popular with families"
-- "Table 5: Check if drinks are needed - been 10 minutes since last order"
+## 🎨 Features Implemented
 
-## 🔧 API Endpoints
+### Customer Platform ✅
+- **Menu Browsing**: Beautiful grid layout with category filtering
+- **Search Functionality**: Search dishes by name, description, or tags
+- **Shopping Cart**: Full cart management with quantity controls
+- **Customization**: AI-powered special instructions for each item
+- **Responsive Design**: Works perfectly on mobile, tablet, and desktop
 
-### Core Endpoints
-- `GET /` - API information
-- `GET /api/test` - Connection test
-- `GET /api/health` - Health check
-- `GET /api/features` - Available AI features
+### Restaurant Platform ✅
+- **Dashboard**: Real-time stats and metrics
+- **Sidebar Navigation**: Easy access to all restaurant features
+- **Order Overview**: Recent orders with status tracking
+- **Quick Actions**: Fast navigation to key features
 
-### AI Endpoints
-- `POST /api/ai/customize` - Process customer customization requests
-- `POST /api/ai/suggest_action` - Generate server action suggestions
+### ReactBits Components ✅
+- **AnimatedButton**: Multiple variants with hover effects and loading states
+- **Card**: Flexible card component with Header, Body, Footer
+- **Toast**: Beautiful notification system
+- **Tabs**: Animated tab navigation
+
+### State Management ✅
+- **CartContext**: Persistent shopping cart with localStorage
+- **OrderContext**: Real-time order management
+- **React Router**: Client-side routing for both platforms
+
+---
+
+## 🛣️ Routes
+
+### Customer Routes
+- `/customer` - Menu browsing (HomePage)
+- `/customer/cart` - Shopping cart
+- `/customer/checkout` - Checkout (Coming Soon)
+- `/customer/orders` - Order history (Coming Soon)
+- `/customer/track/:id` - Order tracking (Coming Soon)
+
+### Restaurant Routes
+- `/restaurant` - Dashboard
+- `/restaurant/kds` - Kitchen Display System (Coming Soon)
+- `/restaurant/orders` - Order Management (Coming Soon)
+- `/restaurant/menu` - Menu Management (Coming Soon)
+- `/restaurant/analytics` - Analytics (Coming Soon)
+- `/restaurant/settings` - Settings (Coming Soon)
+
+---
+
+## 🎯 Key Technologies
+
+### Frontend
+- **React 18** - Modern React with Hooks
+- **React Router v6** - Client-side routing
+- **Framer Motion** - Smooth animations
+- **React Hot Toast** - Toast notifications
+- **Material UI Icons** - Icon library
+- **Context API** - State management
+
+### Styling
+- **Custom CSS** - Full control over design
+- **CSS Gradients** - Modern, vibrant aesthetics
+- **Flexbox & Grid** - Responsive layouts
+- **CSS Animations** - Smooth transitions
+
+### Backend (Existing)
+- **FastAPI** - Python backend
+- **Firebase** - Real-time database (mock mode)
+
+---
+
+## 💡 Usage Guide
+
+### For Customers
+
+1. **Browse Menu**
+   - Visit `http://localhost:3000/customer`
+   - Use category tabs to filter items
+   - Search for specific dishes
+   - Look for "AI Recommended" badges
+
+2. **Add to Cart**
+   - Click "Add to Cart" on any item
+   - View cart count in header
+   - Click cart icon or "View Cart" button
+
+3. **Manage Cart**
+   - Adjust quantities with +/- buttons
+   - Add special instructions for each item
+   - Remove items with delete button
+   - See real-time total calculation
+
+4. **Checkout** (Coming Soon)
+   - Proceed to checkout
+   - Select table number
+   - Choose payment method
+   - Place order
+
+### For Restaurant Staff
+
+1. **View Dashboard**
+   - Visit `http://localhost:3000/restaurant`
+   - See real-time stats (revenue, orders, etc.)
+   - View recent orders
+   - Access quick actions
+
+2. **Navigate Features**
+   - Use sidebar to access different sections
+   - Dashboard, KDS, Orders, Menu, Analytics
+   - Responsive design works on tablets
+
+---
 
 ## 🎨 Design Philosophy
 
-### Customer-Centric
-- **Friction-Free Ordering**: No app downloads, just scan QR
-- **Natural Communication**: Speak naturally, AI understands
-- **Transparent Pricing**: No hidden commission fees
+### Modern & Premium
+- Gradient backgrounds and buttons
+- Smooth animations and transitions
+- Card-based layouts
+- Consistent color scheme
 
-### Restaurant-Focused
-- **Operational Efficiency**: Streamlined kitchen operations
-- **Enhanced Hospitality**: AI-powered service prompts
-- **Revenue Optimization**: Commission-free platform
+### User-Centric
+- Intuitive navigation
+- Clear visual hierarchy
+- Responsive on all devices
+- Fast and performant
 
-## 🔮 AI Capabilities
+### AI-Enhanced
+- Smart recommendations
+- Natural language processing for customizations
+- Server action suggestions
+- Contextual intelligence
 
-### Natural Language Processing
-- Spice level detection and adjustment
-- Ingredient modification (add/remove/adjust)
-- Cooking preference analysis
-- Portion size recommendations
+---
 
-### Contextual Intelligence
-- Time-based suggestions (lunch/dinner/late night)
-- Customer type recognition (family/couple/group)
-- Order value optimization
-- Wait time management
+## 🔧 Development
 
-## 🛡 Mock Data & Testing
+### Adding New Pages
 
-The MVP includes comprehensive mock data for demonstration:
-- **Menu Items**: 5 diverse dishes across categories
-- **Orders**: Real-time order simulation
-- **AI Responses**: Intelligent processing examples
-- **Server Prompts**: Contextual hospitality suggestions
+1. Create page component in appropriate directory:
+   - Customer pages: `src/customer/pages/`
+   - Restaurant pages: `src/restaurant/pages/`
 
-## 🌟 Future Enhancements
+2. Add route in `src/App.jsx`:
+   ```jsx
+   <Route path="new-route" element={<NewPage />} />
+   ```
 
-### Technical
+3. Update navigation (if needed):
+   - Customer: Add to header/footer
+   - Restaurant: Add to sidebar in `RestaurantApp.jsx`
+
+### Using ReactBits Components
+
+```jsx
+import AnimatedButton from '../shared/components/reactbits/AnimatedButton';
+import Card from '../shared/components/reactbits/Card';
+import { toast } from '../shared/components/reactbits/Toast';
+
+// Button
+<AnimatedButton variant="primary" onClick={handleClick}>
+  Click Me
+</AnimatedButton>
+
+// Card
+<Card variant="elevated" hoverable>
+  <Card.Header>Title</Card.Header>
+  <Card.Body>Content</Card.Body>
+  <Card.Footer>Footer</Card.Footer>
+</Card>
+
+// Toast
+toast.success('Success message!');
+toast.error('Error message!');
+toast.info('Info message!');
+```
+
+### Using Context
+
+```jsx
+import { useCart } from '../shared/context/CartContext';
+import { useOrders } from '../shared/context/OrderContext';
+
+function MyComponent() {
+  const { cart, addToCart, getCartTotal } = useCart();
+  const { orders, createOrder } = useOrders();
+  
+  // Use cart and order functions
+}
+```
+
+---
+
+## 📊 Next Steps
+
+### High Priority
+1. ✅ Customer Platform - Menu & Cart
+2. ✅ Restaurant Platform - Dashboard
+3. 🔄 Checkout Flow
+4. 🔄 Order Tracking
+5. 🔄 Kitchen Display System
+
+### Medium Priority
+6. 🔄 Order Management
+7. 🔄 Menu Management
+8. 🔄 Analytics Dashboard
+9. 🔄 Order History
+
+### Future Enhancements
 - Real Firebase integration
-- Production authentication
-- Advanced AI models (GPT/Claude integration)
-- Mobile app development
-- Multi-language support
-
-### Business
+- Authentication system
 - Payment gateway integration
-- Restaurant onboarding flow
-- Customer loyalty programs
-- Advanced analytics dashboard
-- Multi-restaurant support
+- Advanced AI features
+- Multi-language support
+- PWA capabilities
 
-## 📊 Performance Considerations
+---
 
-- **Single-file architecture** for MVP simplicity
-- **Real-time updates** via Firestore listeners
-- **Optimized rendering** with React best practices
-- **Fast API responses** with efficient mock processing
+## 🐛 Troubleshooting
 
-## 🤝 Contributing
+### App won't start
+```bash
+# Clear node_modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+npm start
+```
 
-This is an MVP demonstration. For production deployment:
-1. Implement proper Firebase configuration
-2. Add authentication and authorization
-3. Integrate real payment processing
-4. Enhance AI with production models
-5. Add comprehensive error handling
+### Routing issues
+- Make sure you're using the correct URLs
+- Check that React Router is properly configured
+- Clear browser cache
+
+### Styling issues
+- Check that CSS files are imported
+- Verify class names match
+- Check browser console for errors
+
+---
 
 ## 📄 License
 
-MIT License - Feel free to use this MVP as a foundation for your QR ordering platform.
+MIT License - Feel free to use this project as a foundation for your QR ordering platform.
+
+---
+
+## 🙏 Credits
+
+- **ReactBits**: Inspired by reactbits.dev component library
+- **Material UI**: Icons
+- **Framer Motion**: Animations
+- **React Hot Toast**: Notifications
 
 ---
 
 **SwiftServe AI** - Revolutionizing restaurant ordering with AI-enhanced experiences and zero commission fees.
+
+Built with ❤️ using React and modern web technologies.

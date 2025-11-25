@@ -1,0 +1,164 @@
+.restaurant-app {
+    display: flex;
+    min-height: 100vh;
+    background: #f8fafc;
+}
+
+.restaurant-sidebar {
+    width: 260px;
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.sidebar-header {
+    padding: 2rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.sidebar-header p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 1.5rem 0;
+}
+
+.nav-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: left;
+    font-size: 0.95rem;
+    position: relative;
+}
+
+.nav-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #667eea;
+    transform: scaleY(0);
+    transition: transform 0.3s;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.nav-item.active {
+    background: rgba(102, 126, 234, 0.15);
+    color: white;
+}
+
+.nav-item.active::before {
+    transform: scaleY(1);
+}
+
+.nav-icon {
+    display: flex;
+    align-items: center;
+    font-size: 1.25rem;
+}
+
+.nav-label {
+    flex: 1;
+    font-weight: 500;
+}
+
+.restaurant-main {
+    flex: 1;
+    margin-left: 260px;
+    min-height: 100vh;
+}
+
+@media (max-width: 968px) {
+    .restaurant-sidebar {
+        width: 70px;
+    }
+
+    .sidebar-header h2,
+    .sidebar-header p,
+    .nav-label {
+        display: none;
+    }
+
+    .nav-item {
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .restaurant-main {
+        margin-left: 70px;
+    }
+}
+
+@media (max-width: 640px) {
+    .restaurant-sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .sidebar-header {
+        display: none;
+    }
+
+    .sidebar-nav {
+        display: flex;
+        padding: 0;
+        width: 100%;
+    }
+
+    .nav-item {
+        flex: 1;
+        flex-direction: column;
+        gap: 0.25rem;
+        padding: 0.75rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .nav-item::before {
+        width: 100%;
+        height: 4px;
+        top: auto;
+        bottom: 0;
+        transform: scaleX(0);
+    }
+
+    .nav-item.active::before {
+        transform: scaleX(1);
+    }
+
+    .restaurant-main {
+        margin-left: 0;
+    }
+}

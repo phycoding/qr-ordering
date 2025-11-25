@@ -1,0 +1,34 @@
+.coming-soon-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.coming-soon-card {
+    max-width: 500px;
+    width: 100%;
+}
+
+.coming-soon-content {
+    text-align: center;
+    padding: 2rem;
+}
+
+.coming-soon-icon {
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+}
+
+.coming-soon-content h1 {
+    color: #1e293b;
+    margin-bottom: 1rem;
+}
+
+.coming-soon-content p {
+    color: #64748b;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
