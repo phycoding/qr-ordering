@@ -1,0 +1,55 @@
+{
+  "name": "swiftserve-ai-qr-ordering",
+  "version": "1.0.0",
+  "description": "SwiftServe AI - Commission-free, AI-enhanced QR-based ordering platform MVP",
+  "main": "App.jsx",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "dev": "react-scripts start"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.0",
+    "@mui/material": "^5.14.0",
+    "date-fns": "^4.1.0",
+    "firebase": "^10.0.0",
+    "framer-motion": "^12.23.24",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.6.0",
+    "react-router-dom": "^7.9.6",
+    "react-scripts": "5.0.1",
+    "recharts": "^3.5.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "keywords": [
+    "qr-ordering",
+    "ai-enhanced",
+    "restaurant",
+    "commission-free",
+    "react",
+    "material-ui",
+    "firebase"
+  ],
+  "author": "SwiftServe AI Team",
+  "license": "MIT"
+}
