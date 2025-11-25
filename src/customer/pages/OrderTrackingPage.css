@@ -1,0 +1,289 @@
+.tracking-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding-bottom: 2rem;
+}
+
+.tracking-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+}
+
+.tracking-header h1 {
+    flex: 1;
+    margin: 0;
+    font-size: 1.75rem;
+}
+
+.loading-order {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #64748b;
+}
+
+.tracking-content {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.tracking-card {
+    overflow: visible;
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.order-header h2 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.5rem;
+    color: #1e293b;
+}
+
+.order-header p {
+    margin: 0;
+    color: #64748b;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge[data-status="new"] {
+    background: #fee;
+    color: #ef4444;
+}
+
+.status-badge[data-status="preparing"] {
+    background: #fef3c7;
+    color: #f59e0b;
+}
+
+.status-badge[data-status="ready"] {
+    background: #d1fae5;
+    color: #10b981;
+}
+
+.status-badge[data-status="completed"] {
+    background: #e0e7ff;
+    color: #667eea;
+}
+
+.progress-steps {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 2rem 0;
+    padding: 0 1rem;
+}
+
+.step-container {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+}
+
+.step-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: all 0.3s;
+    border: 3px solid #e2e8f0;
+}
+
+.step.active .step-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+    animation: pulse 2s infinite;
+}
+
+.step.completed .step-icon {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.step-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-align: center;
+}
+
+.step.active .step-label,
+.step.completed .step-label {
+    color: #1e293b;
+}
+
+.step-line {
+    flex: 1;
+    height: 3px;
+    background: #e2e8f0;
+    margin: 0 0.5rem;
+    position: relative;
+    top: -20px;
+}
+
+.step-line.completed {
+    background: #10b981;
+}
+
+.estimated-time {
+    text-align: center;
+    padding: 2rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    margin: 2rem 0;
+}
+
+.estimated-time h3 {
+    margin: 0 0 0.5rem 0;
+    color: #64748b;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.time-value {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #667eea;
+}
+
+.order-items-section h3,
+.instructions-section h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    color: #1e293b;
+}
+
+.order-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.order-item-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border-radius: 8px;
+}
+
+.item-qty {
+    background: #667eea;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    min-width: 30px;
+    text-align: center;
+}
+
+.item-name {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.item-price {
+    font-weight: 700;
+    color: #10b981;
+}
+
+.order-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    background: #f1f5f9;
+    border-radius: 8px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.instructions-section {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #fef3c7;
+    border-radius: 8px;
+}
+
+.instructions-section p {
+    margin: 0;
+    color: #92400e;
+}
+
+.tracking-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .progress-steps {
+        padding: 0;
+    }
+
+    .step-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+
+    .step-label {
+        font-size: 0.75rem;
+    }
+
+    .step-line {
+        margin: 0 0.25rem;
+    }
+
+    .tracking-actions {
+        flex-direction: column;
+    }
+}

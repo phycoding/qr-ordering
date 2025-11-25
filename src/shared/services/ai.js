@@ -132,6 +132,31 @@ class AIService {
         // Return item IDs that should be recommended
         return ['item1', 'item3', 'item5'];
     }
+
+    // Get menu recommendations based on menu items
+    async getMenuRecommendations(menuItems) {
+        try {
+            const response = await apiService.post('/api/ai/menu-recommendations', {
+                menu_items: menuItems
+            });
+            return response.recommendations;
+        } catch (error) {
+            console.log('API not available, using local menu recommendations');
+            return this.localGetMenuRecommendations(menuItems);
+        }
+    }
+
+    // Local fallback for menu recommendations
+    localGetMenuRecommendations(menuItems) {
+        // Return items marked as AI recommended or random selection
+        const recommended = menuItems.filter(item => item.aiRecommended);
+        if (recommended.length > 0) {
+            return recommended.map(item => item.id);
+        }
+        // If no items marked, return first 3 items
+        return menuItems.slice(0, 3).map(item => item.id);
+    }
 }
 
 export default new AIService();
+
