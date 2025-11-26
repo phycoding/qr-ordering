@@ -7,6 +7,7 @@ import ToastContainer from './shared/components/reactbits/Toast';
 
 // Customer Platform
 import CustomerApp from './customer/CustomerApp';
+import CustomerLoginPage from './customer/pages/CustomerLoginPage';
 import HomePage from './customer/pages/HomePage';
 import CartPage from './customer/pages/CartPage';
 import CheckoutPage from './customer/pages/CheckoutPage';
@@ -32,12 +33,14 @@ function App() {
           <OrderProvider>
             <ToastContainer />
             <Routes>
-              {/* Root redirect to customer platform */}
-              <Route path="/" element={<Navigate to="/customer" replace />} />
+              {/* Root redirect to customer login */}
+              <Route path="/" element={<Navigate to="/customer/login" replace />} />
 
               {/* Customer Platform Routes */}
               <Route path="/customer" element={<CustomerApp />}>
-                <Route index element={<HomePage />} />
+                <Route path="login" element={<CustomerLoginPage />} />
+                <Route path="home" element={<HomePage />} />
+                <Route index element={<Navigate to="login" replace />} />
                 <Route path="cart" element={<CartPage />} />
                 <Route path="checkout" element={<CheckoutPage />} />
                 <Route path="track/:orderId" element={<OrderTrackingPage />} />

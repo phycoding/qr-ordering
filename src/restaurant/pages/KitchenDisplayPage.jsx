@@ -128,7 +128,7 @@ const KitchenDisplayPage = () => {
                 {/* Ready Column */}
                 <div className="kds-column ready-column">
                     <div className="column-header">
-                        <h3>Ready</h3>
+                        <h3>Ready to Serve</h3>
                         <span className="count-badge">{getOrdersByStatus(ORDER_STATUS.READY).length}</span>
                     </div>
                     <div className="column-content">
@@ -184,9 +184,9 @@ const OrderCard = ({ order, onStatusUpdate, elapsedTime }) => {
             case ORDER_STATUS.NEW:
                 return 'Start Preparing';
             case ORDER_STATUS.PREPARING:
-                return 'Mark Ready';
+                return 'Ready to Serve';
             case ORDER_STATUS.READY:
-                return 'Complete';
+                return 'Mark Served';
             default:
                 return 'Update';
         }

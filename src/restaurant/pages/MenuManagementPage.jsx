@@ -109,52 +109,62 @@ const MenuManagementPage = () => {
             {viewMode === 'grid' ? (
                 <div className="menu-grid">
                     {filteredItems.map(item => (
-                        <Card key={item.id} variant="elevated" className="menu-item-card">
-                            {item.image ? (
-                                <img
-                                    src={item.image}
-                                    alt={item.name}
-                                    className="item-image"
-                                    onError={(e) => {
-                                        e.target.style.display = 'none';
-                                        e.target.nextSibling.style.display = 'flex';
-                                    }}
-                                />
-                            ) : null}
-                            <div className="item-image-placeholder" style={{ display: item.image ? 'none' : 'flex' }}>
-                                {item.name[0]}
+                        <div key={item.id} className="menu-item-card">
+                            <div className="item-image-container">
+                                {item.image ? (
+                                    <img
+                                        src={item.image}
+                                        alt={item.name}
+                                        className="item-image"
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling.style.display = 'flex';
+                                        }}
+                                    />
+                                ) : null}
+                                <div className="item-image-placeholder" style={{ display: item.image ? 'none' : 'flex' }}>
+                                    {item.name[0]}
+                                </div>
+                                <button
+                                    className="availability-toggle"
+                                    onClick={() => handleToggleAvailability(item)}
+                                    title={item.available ? "Mark Unavailable" : "Mark Available"}
+                                >
+                                    {item.available ? <ToggleOn color="success" fontSize="medium" /> : <ToggleOff fontSize="medium" />}
+                                </button>
                             </div>
-                            <Card.Body>
+
+                            <div className="item-content">
                                 <div className="item-header">
                                     <h3>{item.name}</h3>
-                                    <button
-                                        className="availability-toggle"
-                                        onClick={() => handleToggleAvailability(item)}
-                                    >
-                                        {item.available ? <ToggleOn color="success" /> : <ToggleOff />}
-                                    </button>
+                                    <div className="item-rating">
+                                        4.2 <span style={{ fontSize: '10px' }}>★</span>
+                                    </div>
                                 </div>
-                                <p className="item-category">{item.category}</p>
+                                <div className="item-category">{item.category}</div>
                                 <p className="item-description">{item.description}</p>
+
                                 <div className="item-footer">
                                     <span className="item-price">₹{item.price}</span>
                                     <div className="item-actions">
                                         <button
                                             className="action-btn edit-btn"
                                             onClick={() => setEditingItem(item)}
+                                            title="Edit"
                                         >
                                             <Edit fontSize="small" />
                                         </button>
                                         <button
                                             className="action-btn delete-btn"
                                             onClick={() => handleDelete(item)}
+                                            title="Delete"
                                         >
                                             <Delete fontSize="small" />
                                         </button>
                                     </div>
                                 </div>
-                            </Card.Body>
-                        </Card>
+                            </div>
+                        </div>
                     ))}
                 </div>
             ) : (

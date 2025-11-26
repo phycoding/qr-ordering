@@ -1,203 +1,118 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowBack, Delete, Add, Remove } from '@mui/icons-material';
-import Card from '../../shared/components/reactbits/Card';
-import AnimatedButton from '../../shared/components/reactbits/AnimatedButton';
+import { ArrowBack, Delete, Add, Remove, LocalOffer } from '@mui/icons-material';
 import { useCart } from '../../shared/context/CartContext';
 import { toast } from '../../shared/components/reactbits/Toast';
 import './CartPage.css';
 
 const CartPage = () => {
     const navigate = useNavigate();
-    const {
-        cart,
-        removeFromCart,
-        updateQuantity,
-        updateCustomization,
-        getCartTotal,
-        getCartCount
-    } = useCart();
-
-    const [expandedItems, setExpandedItems] = useState({});
+    const { cart, removeFromCart, updateQuantity, getCartTotal, getCartCount } = useCart();
+    const [instruction, setInstruction] = useState('');
 
     const handleQuantityChange = (itemId, newQuantity) => {
         if (newQuantity < 1) {
-            handleRemoveItem(itemId);
-            return;
+            removeFromCart(itemId);
+        } else {
+            updateQuantity(itemId, newQuantity);
         }
-        updateQuantity(itemId, newQuantity);
-    };
-
-    const handleRemoveItem = (itemId) => {
-        const item = cart.find(i => i.id === itemId);
-        removeFromCart(itemId);
-        toast.success(`${item?.name} removed from cart`);
-    };
-
-    const handleCustomizationChange = (itemId, value) => {
-        updateCustomization(itemId, value);
-    };
-
-    const toggleCustomization = (itemId) => {
-        setExpandedItems(prev => ({
-            ...prev,
-            [itemId]: !prev[itemId]
-        }));
-    };
-
-    const handleCheckout = () => {
-        if (cart.length === 0) {
-            toast.warning('Your cart is empty');
-            return;
-        }
-        navigate('/customer/checkout');
     };
 
     if (cart.length === 0) {
         return (
-            <div className="cart-page">
-                <div className="cart-header">
-                    <button className="back-button" onClick={() => navigate('/customer')}>
-                        <ArrowBack />
-                    </button>
-                    <h1>Shopping Cart</h1>
-                </div>
-
-                <div className="empty-cart">
-                    <div className="empty-cart-icon">🛒</div>
-                    <h2>Your cart is empty</h2>
-                    <p>Add some delicious items to get started!</p>
-                    <AnimatedButton
-                        variant="primary"
-                        onClick={() => navigate('/customer')}
-                    >
-                        Browse Menu
-                    </AnimatedButton>
-                </div>
+            <div className="z-cart-empty">
+                <img src="https://b.zmtcdn.com/web_assets/b40b97e677bc7b2ca77c58c61db266fe1603954218.png" alt="Empty Cart" />
+                <h3>Your cart is empty</h3>
+                <p>You can go to home page to view more restaurants</p>
+                <button onClick={() => navigate('/customer/home')}>See restaurants near you</button>
             </div>
         );
     }
 
     return (
-        <div className="cart-page">
-            <div className="cart-header">
-                <button className="back-button" onClick={() => navigate('/customer')}>
-                    <ArrowBack />
-                </button>
-                <h1>Shopping Cart</h1>
-                <span className="cart-count">{getCartCount()} items</span>
+        <div className="z-cart-page">
+            <div className="z-cart-header">
+                <button onClick={() => navigate('/customer/home')}><ArrowBack /></button>
+                <h1>Cart</h1>
             </div>
 
-            <div className="cart-content">
-                <div className="cart-items">
-                    {cart.map((item) => (
-                        <Card key={item.id} variant="elevated" className="cart-item-card">
-                            <Card.Body>
-                                <div className="cart-item">
-                                    <div className="item-image">
-                                        <span className="item-initial">{item.name[0]}</span>
-                                    </div>
-
-                                    <div className="item-details">
-                                        <h3 className="item-name">{item.name}</h3>
-                                        <p className="item-price">₹{item.price} each</p>
-
-                                        <button
-                                            className="customize-button"
-                                            onClick={() => toggleCustomization(item.id)}
-                                        >
-                                            {expandedItems[item.id] ? '− Hide' : '+ Add'} special instructions
-                                        </button>
-
-                                        {expandedItems[item.id] && (
-                                            <div className="customization-section">
-                                                <textarea
-                                                    className="customization-input"
-                                                    placeholder="e.g., make it less spicy, extra cheese, no onions..."
-                                                    value={item.customization || ''}
-                                                    onChange={(e) => handleCustomizationChange(item.id, e.target.value)}
-                                                    rows={3}
-                                                />
-                                                <p className="ai-hint">✨ AI will process your instructions for the kitchen</p>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="item-actions">
-                                        <div className="quantity-controls">
-                                            <button
-                                                className="qty-button"
-                                                onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                                            >
-                                                <Remove />
-                                            </button>
-                                            <span className="quantity">{item.quantity}</span>
-                                            <button
-                                                className="qty-button"
-                                                onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                                            >
-                                                <Add />
-                                            </button>
-                                        </div>
-
-                                        <div className="item-total">
-                                            ₹{item.price * item.quantity}
-                                        </div>
-
-                                        <button
-                                            className="remove-button"
-                                            onClick={() => handleRemoveItem(item.id)}
-                                        >
-                                            <Delete />
-                                        </button>
-                                    </div>
+            <div className="z-cart-container">
+                {/* Items Section */}
+                <div className="z-cart-items-section">
+                    {cart.map(item => (
+                        <div key={item.id} className="z-cart-item">
+                            <div className="z-cart-item-info">
+                                <div className={`veg-icon ${item.isVeg ? 'veg' : 'non-veg'}`}>●</div>
+                                <div className="z-cart-item-details">
+                                    <h4>{item.name}</h4>
+                                    <p>₹{item.price}</p>
+                                    <p className="z-item-desc">{item.description}</p>
                                 </div>
-                            </Card.Body>
-                        </Card>
+                            </div>
+                            <div className="z-cart-actions">
+                                <div className="z-qty-control small">
+                                    <button onClick={() => handleQuantityChange(item.id, item.quantity - 1)}>-</button>
+                                    <span>{item.quantity}</span>
+                                    <button onClick={() => handleQuantityChange(item.id, item.quantity + 1)}>+</button>
+                                </div>
+                                <div className="z-item-total">₹{item.price * item.quantity}</div>
+                            </div>
+                        </div>
                     ))}
-                </div>
 
-                <div className="cart-summary">
-                    <Card variant="elevated" className="summary-card">
-                        <Card.Header>
-                            <h2>Order Summary</h2>
-                        </Card.Header>
-                        <Card.Body>
-                            <div className="summary-row">
-                                <span>Subtotal ({getCartCount()} items)</span>
-                                <span>₹{getCartTotal()}</span>
-                            </div>
-                            <div className="summary-row">
-                                <span>GST (5%)</span>
-                                <span>₹{Math.round(getCartTotal() * 0.05)}</span>
-                            </div>
-                            <div className="summary-row total-row">
-                                <span>Total</span>
-                                <span>₹{Math.round(getCartTotal() * 1.05)}</span>
-                            </div>
-                        </Card.Body>
-                        <Card.Footer>
-                            <AnimatedButton
-                                variant="primary"
-                                size="large"
-                                fullWidth
-                                onClick={handleCheckout}
-                            >
-                                Proceed to Checkout
-                            </AnimatedButton>
-                        </Card.Footer>
-                    </Card>
-
-                    <div className="continue-shopping">
-                        <AnimatedButton
-                            variant="outline"
-                            fullWidth
-                            onClick={() => navigate('/customer')}
-                        >
-                            Continue Shopping
-                        </AnimatedButton>
+                    <div className="z-instruction-box">
+                        <input
+                            type="text"
+                            placeholder="Write instructions for restaurant..."
+                            value={instruction}
+                            onChange={(e) => setInstruction(e.target.value)}
+                        />
                     </div>
                 </div>
+
+                {/* Bill Details */}
+                <div className="z-bill-details">
+                    <h3>Bill Details</h3>
+                    <div className="z-bill-row">
+                        <span>Item Total</span>
+                        <span>₹{getCartTotal()}</span>
+                    </div>
+                    <div className="z-bill-row">
+                        <span>Delivery Fee</span>
+                        <span>₹40</span>
+                    </div>
+                    <div className="z-bill-row">
+                        <span>GST and Restaurant Charges</span>
+                        <span>₹{Math.round(getCartTotal() * 0.05)}</span>
+                    </div>
+                    <div className="z-bill-divider"></div>
+                    <div className="z-bill-row total">
+                        <span>To Pay</span>
+                        <span>₹{Math.round(getCartTotal() * 1.05) + 40}</span>
+                    </div>
+                </div>
+
+                {/* Offers */}
+                <div className="z-offers-section">
+                    <div className="z-offer-header">
+                        <LocalOffer /> <span>Offers & Benefits</span>
+                    </div>
+                    <div className="z-offer-input">
+                        <input type="text" placeholder="Apply Coupon" />
+                        <button>APPLY</button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Bottom Bar */}
+            <div className="z-cart-footer">
+                <div className="z-pay-info">
+                    <span className="pay-label">PAY USING</span>
+                    <span className="pay-method">UPI (Google Pay)</span>
+                </div>
+                <button className="z-place-order-btn" onClick={() => navigate('/customer/checkout')}>
+                    Place Order <span className="total-amt">₹{Math.round(getCartTotal() * 1.05) + 40}</span>
+                </button>
             </div>
         </div>
     );

@@ -1,161 +1,185 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, ShoppingCart, Star } from '@mui/icons-material';
-import Card from '../../shared/components/reactbits/Card';
-import AnimatedButton from '../../shared/components/reactbits/AnimatedButton';
-import Tabs from '../../shared/components/reactbits/Tabs';
+import { Search, ShoppingCart, Star, LocationOn, Person, FilterList, KeyboardArrowDown } from '@mui/icons-material';
 import { useCart } from '../../shared/context/CartContext';
 import { useMenu } from '../../shared/context/MenuContext';
 import { toast } from '../../shared/components/reactbits/Toast';
 import { CATEGORIES } from '../../utils/constants';
-import aiService from '../../shared/services/ai';
 import './HomePage.css';
 
 const HomePage = () => {
     const navigate = useNavigate();
-    const { addToCart, getCartCount, getCartTotal } = useCart();
+    const { addToCart, removeFromCart, cart } = useCart();
     const { menuItems } = useMenu();
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState(0);
-    const [recommendations, setRecommendations] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('Recommended');
+    const [activeFilter, setActiveFilter] = useState('all'); // all, veg, non-veg
 
-    useEffect(() => {
-        const getRecommendations = async () => {
-            const recs = await aiService.getMenuRecommendations(menuItems);
-            setRecommendations(recs);
-        };
-        getRecommendations();
-    }, [menuItems]);
+    const getQuantity = (itemId) => {
+        const item = cart.find(i => i.id === itemId);
+        return item ? item.quantity : 0;
+    };
+
+    const handleQuantityChange = (item, change) => {
+        if (change > 0) {
+            addToCart(item);
+            if (getQuantity(item.id) === 0) toast.success(`${item.name} added`);
+        } else {
+            removeFromCart(item.id);
+        }
+    };
 
     const filteredItems = menuItems.filter(item => {
         const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             item.description.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesCategory = selectedCategory === 0 || item.category === CATEGORIES[selectedCategory];
-        const isAvailable = item.available !== false;
-        return matchesSearch && matchesCategory && isAvailable;
+        const matchesCategory = selectedCategory === 'Recommended' || item.category === selectedCategory;
+        const matchesFilter = activeFilter === 'all' ||
+            (activeFilter === 'veg' && item.isVeg) ||
+            (activeFilter === 'non-veg' && !item.isVeg);
+
+        return matchesSearch && matchesCategory && matchesFilter && item.available !== false;
     });
 
-    const handleAddToCart = (item) => {
-        addToCart(item);
-        toast.success(`${item.name} added to cart!`);
-    };
-
-    const getRandomGradient = () => {
-        const gradients = [
-            '#667eea 0%, #764ba2 100%',
-            '#f093fb 0%, #f5576c 100%',
-            '#4facfe 0%, #00f2fe 100%',
-            '#43e97b 0%, #38f9d7 100%',
-            '#fa709a 0%, #fee140 100%',
-            '#30cfd0 0%, #330867 100%',
-        ];
-        return gradients[Math.floor(Math.random() * gradients.length)];
-    };
+    // Group items for "Recommended" view if needed, or just show list
+    // For Zomato style, we often see a list of items with images on the right
 
     return (
-        <div className="homepage">
-            <div className="homepage-header">
-                <div className="header-content">
-                    <h1 className="header-title">SwiftServe AI</h1>
-                    <p className="header-subtitle">AI-Enhanced QR Ordering Experience</p>
+        <div className="zomato-home">
+            {/* Sticky Header */}
+            <div className="z-header">
+                <div className="z-location-bar">
+                    <div className="z-location">
+                        <LocationOn className="loc-icon" />
+                        <div className="loc-text">
+                            <span className="loc-title">Work</span>
+                            <span className="loc-subtitle">HSR Layout, Bangalore...</span>
+                        </div>
+                        <KeyboardArrowDown className="arrow-icon" />
+                    </div>
+                    <div className="z-profile">
+                        <div className="profile-icon">S</div>
+                    </div>
                 </div>
 
-                <button className="cart-button" onClick={() => navigate('/customer/cart')}>
-                    <ShoppingCart />
-                    {getCartCount() > 0 && (
-                        <span className="cart-badge">{getCartCount()}</span>
-                    )}
+                <div className="z-search-container">
+                    <div className="z-search-box">
+                        <Search className="search-icon" />
+                        <input
+                            type="text"
+                            placeholder="Restaurant name, cuisine, or a dish..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Categories / Filters */}
+            <div className="z-filters-scroll">
+                <button className="z-filter-btn active">
+                    <FilterList fontSize="small" /> Sort
                 </button>
+                <button
+                    className={`z-filter-btn ${activeFilter === 'veg' ? 'selected' : ''}`}
+                    onClick={() => setActiveFilter(activeFilter === 'veg' ? 'all' : 'veg')}
+                >
+                    Pure Veg
+                </button>
+                <button
+                    className={`z-filter-btn ${activeFilter === 'non-veg' ? 'selected' : ''}`}
+                    onClick={() => setActiveFilter(activeFilter === 'non-veg' ? 'all' : 'non-veg')}
+                >
+                    Non Veg
+                </button>
+                <button className="z-filter-btn">Rating 4.0+</button>
             </div>
 
-            <div className="search-section">
-                <div className="search-bar">
-                    <Search className="search-icon" />
-                    <input
-                        type="text"
-                        placeholder="Search for dishes..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="search-input"
-                    />
+            {/* Horizontal Categories */}
+            <div className="z-categories-section">
+                <h3>Eat what makes you happy</h3>
+                <div className="z-categories-list">
+                    {['Recommended', ...CATEGORIES].map((cat, idx) => (
+                        <div
+                            key={idx}
+                            className={`z-category-item ${selectedCategory === cat ? 'active' : ''}`}
+                            onClick={() => setSelectedCategory(cat)}
+                        >
+                            <div className="cat-image-placeholder">
+                                {cat[0]}
+                            </div>
+                            <span>{cat}</span>
+                        </div>
+                    ))}
                 </div>
             </div>
 
-            <div className="category-section">
-                <Tabs defaultTab={selectedCategory} onChange={setSelectedCategory}>
-                    {CATEGORIES.map((category, index) => (
-                        <Tabs.Tab key={index} label={category}>
-                            <div></div>
-                        </Tabs.Tab>
-                    ))}
-                </Tabs>
-            </div>
+            {/* Menu List */}
+            <div className="z-menu-list">
+                <h3 className="section-title">{selectedCategory} ({filteredItems.length})</h3>
 
-            <div className="menu-grid">
-                {filteredItems.length > 0 ? (
-                    filteredItems.map((item) => (
-                        <Card key={item.id} variant="elevated" hoverable className="menu-item-card">
-                            <div className="card-image-container">
-                                {item.aiRecommended && (
-                                    <div className="ai-badge">
-                                        <Star className="star-icon" />
-                                        <span>AI Recommended</span>
+                {filteredItems.map(item => (
+                    <div key={item.id} className="z-menu-item">
+                        <div className="z-item-info">
+                            <div className="z-item-header">
+                                <span className={`veg-icon ${item.isVeg ? 'veg' : 'non-veg'}`}>
+                                    ●
+                                </span>
+                                {item.isBestseller && <span className="bestseller-tag">Bestseller</span>}
+                            </div>
+                            <h4 className="z-item-name">{item.name}</h4>
+                            <div className="z-item-rating">
+                                <div className="stars">
+                                    <Star fontSize="inherit" />
+                                    <Star fontSize="inherit" />
+                                    <Star fontSize="inherit" />
+                                    <Star fontSize="inherit" />
+                                    <Star fontSize="inherit" />
+                                </div>
+                                <span className="vote-count">142 votes</span>
+                            </div>
+                            <div className="z-item-price">₹{item.price}</div>
+                            <p className="z-item-desc">{item.description}</p>
+                        </div>
+
+                        <div className="z-item-image-container">
+                            {item.image ? (
+                                <img src={item.image} alt={item.name} className="z-item-image" />
+                            ) : (
+                                <div className="z-item-placeholder">{item.name[0]}</div>
+                            )}
+
+                            <div className="z-add-button-container">
+                                {getQuantity(item.id) === 0 ? (
+                                    <button
+                                        className="z-add-btn"
+                                        onClick={() => handleQuantityChange(item, 1)}
+                                    >
+                                        ADD
+                                    </button>
+                                ) : (
+                                    <div className="z-qty-control">
+                                        <button onClick={() => handleQuantityChange(item, -1)}>-</button>
+                                        <span>{getQuantity(item.id)}</span>
+                                        <button onClick={() => handleQuantityChange(item, 1)}>+</button>
                                     </div>
                                 )}
-                                <div
-                                    className="card-image"
-                                    style={{
-                                        background: `linear-gradient(135deg, ${getRandomGradient()})`,
-                                    }}
-                                >
-                                    <span className="image-placeholder">{item.name[0]}</span>
-                                </div>
                             </div>
-
-                            <Card.Body>
-                                <h3 className="item-name">{item.name}</h3>
-                                <p className="item-category">{item.category}</p>
-                                <p className="item-description">{item.description}</p>
-                                <div className="item-meta">
-                                    <span className="prep-time">⏱️ {item.preparationTime} min</span>
-                                    <span className="calories">🔥 {item.nutritionInfo?.calories || 0} cal</span>
-                                </div>
-                            </Card.Body>
-
-                            <Card.Footer>
-                                <div className="item-footer">
-                                    <span className="item-price">₹{item.price}</span>
-                                    <AnimatedButton
-                                        variant="primary"
-                                        size="small"
-                                        onClick={() => handleAddToCart(item)}
-                                        disabled={!item.available}
-                                    >
-                                        {item.available ? 'Add to Cart' : 'Unavailable'}
-                                    </AnimatedButton>
-                                </div>
-                            </Card.Footer>
-                        </Card>
-                    ))
-                ) : (
-                    <div className="no-results">
-                        <p>No items found matching your search.</p>
+                            <div className="customizable-text">customisable</div>
+                        </div>
                     </div>
-                )}
+                ))}
             </div>
 
-            {getCartCount() > 0 && (
-                <div className="floating-cart-mobile">
-                    <AnimatedButton
-                        variant="primary"
-                        size="large"
-                        fullWidth
-                        onClick={() => navigate('/customer/cart')}
-                    >
-                        <ShoppingCart />
-                        <span>View Cart ({getCartCount()} items)</span>
-                        <span className="cart-total">₹{getCartTotal()}</span>
-                    </AnimatedButton>
+            {/* Floating Cart Button */}
+            {cart.length > 0 && (
+                <div className="z-floating-cart" onClick={() => navigate('/customer/cart')}>
+                    <div className="cart-info">
+                        <span className="cart-count">{cart.reduce((sum, i) => sum + i.quantity, 0)} ITEMS</span>
+                        <span className="cart-total">₹{cart.reduce((sum, i) => sum + (i.price * i.quantity), 0)}</span>
+                    </div>
+                    <div className="view-cart-btn">
+                        View Cart <ShoppingCart fontSize="small" />
+                    </div>
                 </div>
             )}
         </div>
