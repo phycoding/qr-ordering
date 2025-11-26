@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { mockMenuData } from '../../utils/constants';
+import api from '../services/api';
+import websocket from '../services/websocket';
 
 const MenuContext = createContext();
 
@@ -12,61 +13,148 @@ export const useMenu = () => {
 };
 
 export const MenuProvider = ({ children }) => {
-    const [menuItems, setMenuItems] = useState(() => {
-        const saved = localStorage.getItem('menuItems');
-        return saved ? JSON.parse(saved) : mockMenuData;
-    });
+    const [menuItems, setMenuItems] = useState([]);
+    const [categories, setCategories] = useState([
+        'Main Course', 'Appetizers', 'Breads', 'Beverages', 'Desserts'
+    ]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const [categories, setCategories] = useState(() => {
-        const saved = localStorage.getItem('categories');
-        return saved ? JSON.parse(saved) : [
-            'Main Course', 'Appetizers', 'Breads', 'Beverages', 'Desserts'
-        ];
-    });
-
+    // Load menu from backend on mount
     useEffect(() => {
-        localStorage.setItem('menuItems', JSON.stringify(menuItems));
-    }, [menuItems]);
+        loadMenu();
+    }, []);
 
+    // Setup WebSocket listener for menu updates
     useEffect(() => {
-        localStorage.setItem('categories', JSON.stringify(categories));
-    }, [categories]);
+        websocket.connect();
 
-    const addMenuItem = (item) => {
-        const newItem = {
-            ...item,
-            id: `item-${Date.now()}`,
-            available: true
+        const unsubscribe = websocket.subscribe('menu_updated', () => {
+            console.log('Menu updated via WebSocket, reloading...');
+            loadMenu();
+        });
+
+        return () => {
+            unsubscribe();
         };
-        setMenuItems(prev => [...prev, newItem]);
-        return newItem;
+    }, []);
+
+    const loadMenu = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const items = await api.getMenu();
+            setMenuItems(items);
+
+            // Extract unique categories from menu items
+            const uniqueCategories = [...new Set(items.map(item => item.category))];
+            if (uniqueCategories.length > 0) {
+                setCategories(uniqueCategories);
+            }
+        } catch (err) {
+            console.error('Error loading menu:', err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const updateMenuItem = (itemId, updates) => {
-        setMenuItems(prev =>
-            prev.map(item => item.id === itemId ? { ...item, ...updates } : item)
-        );
+    const addMenuItem = async (item) => {
+        try {
+            const response = await api.createMenuItem({
+                name: item.name,
+                description: item.description,
+                price: item.price,
+                category: item.category,
+                available: item.available !== undefined ? item.available : true,
+                preparationTime: item.preparationTime || 15,
+                tags: item.tags || [],
+                aiRecommended: item.aiRecommended || false
+            });
+
+            // Reload menu to get the new item with server-generated ID
+            await loadMenu();
+            return response;
+        } catch (err) {
+            console.error('Error adding menu item:', err);
+            throw err;
+        }
     };
 
-    const deleteMenuItem = (itemId) => {
-        setMenuItems(prev => prev.filter(item => item.id !== itemId));
+    const updateMenuItem = async (itemId, updates) => {
+        try {
+            // Get the current item to merge with updates
+            const currentItem = menuItems.find(item => item.id === itemId);
+            if (!currentItem) {
+                throw new Error('Menu item not found');
+            }
+
+            await api.updateMenuItem(itemId, {
+                name: updates.name !== undefined ? updates.name : currentItem.name,
+                description: updates.description !== undefined ? updates.description : currentItem.description,
+                price: updates.price !== undefined ? updates.price : currentItem.price,
+                category: updates.category !== undefined ? updates.category : currentItem.category,
+                available: updates.available !== undefined ? updates.available : currentItem.available,
+                preparationTime: updates.preparationTime !== undefined ? updates.preparationTime : currentItem.preparationTime,
+                tags: updates.tags !== undefined ? updates.tags : currentItem.tags,
+                aiRecommended: updates.aiRecommended !== undefined ? updates.aiRecommended : currentItem.aiRecommended
+            });
+
+            // Update local state optimistically
+            setMenuItems(prev =>
+                prev.map(item => item.id === itemId ? { ...item, ...updates } : item)
+            );
+        } catch (err) {
+            console.error('Error updating menu item:', err);
+            // Reload menu to ensure consistency
+            await loadMenu();
+            throw err;
+        }
     };
 
-    const toggleAvailability = (itemId) => {
-        setMenuItems(prev =>
-            prev.map(item =>
-                item.id === itemId ? { ...item, available: !item.available } : item
-            )
-        );
+    const deleteMenuItem = async (itemId) => {
+        try {
+            await api.deleteMenuItem(itemId);
+
+            // Update local state optimistically
+            setMenuItems(prev => prev.filter(item => item.id !== itemId));
+        } catch (err) {
+            console.error('Error deleting menu item:', err);
+            // Reload menu to ensure consistency
+            await loadMenu();
+            throw err;
+        }
     };
 
-    const bulkUpdatePrices = (percentage) => {
-        setMenuItems(prev =>
-            prev.map(item => ({
-                ...item,
-                price: Math.round(item.price * (1 + percentage / 100))
-            }))
-        );
+    const toggleAvailability = async (itemId) => {
+        try {
+            const item = menuItems.find(item => item.id === itemId);
+            if (!item) {
+                throw new Error('Menu item not found');
+            }
+
+            await updateMenuItem(itemId, { available: !item.available });
+        } catch (err) {
+            console.error('Error toggling availability:', err);
+            throw err;
+        }
+    };
+
+    const bulkUpdatePrices = async (percentage) => {
+        try {
+            // Update all items
+            const updatePromises = menuItems.map(item =>
+                updateMenuItem(item.id, {
+                    price: Math.round(item.price * (1 + percentage / 100))
+                })
+            );
+
+            await Promise.all(updatePromises);
+            await loadMenu();
+        } catch (err) {
+            console.error('Error bulk updating prices:', err);
+            throw err;
+        }
     };
 
     const addCategory = (category) => {
@@ -82,16 +170,20 @@ export const MenuProvider = ({ children }) => {
     const value = {
         menuItems,
         categories,
+        loading,
+        error,
         addMenuItem,
         updateMenuItem,
         deleteMenuItem,
         toggleAvailability,
         bulkUpdatePrices,
         addCategory,
-        deleteCategory
+        deleteCategory,
+        refreshMenu: loadMenu
     };
 
     return <MenuContext.Provider value={value}>{children}</MenuContext.Provider>;
 };
 
 export default MenuContext;
+

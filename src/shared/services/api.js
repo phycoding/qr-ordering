@@ -16,7 +16,8 @@ class ApiService {
             const response = await fetch(url, config);
 
             if (!response.ok) {
-                throw new Error(`API Error: ${response.statusText}`);
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.detail || `API Error: ${response.statusText}`);
             }
 
             return await response.json();
@@ -49,6 +50,15 @@ class ApiService {
         });
     }
 
+    // PATCH request
+    async patch(endpoint, data, options = {}) {
+        return this.request(endpoint, {
+            ...options,
+            method: 'PATCH',
+            body: JSON.stringify(data),
+        });
+    }
+
     // DELETE request
     async delete(endpoint, options = {}) {
         return this.request(endpoint, { ...options, method: 'DELETE' });
@@ -62,6 +72,50 @@ class ApiService {
             return { status: 'offline', error: error.message };
         }
     }
+
+    // Menu API methods
+    async getMenu() {
+        return this.get('/api/menu');
+    }
+
+    async createMenuItem(itemData) {
+        return this.post('/api/menu', itemData);
+    }
+
+    async updateMenuItem(itemId, itemData) {
+        return this.put(`/api/menu/${itemId}`, itemData);
+    }
+
+    async deleteMenuItem(itemId) {
+        return this.delete(`/api/menu/${itemId}`);
+    }
+
+    // Order API methods
+    async getOrders() {
+        return this.get('/api/orders');
+    }
+
+    async getOrderById(orderId) {
+        return this.get(`/api/orders/${orderId}`);
+    }
+
+    async createOrder(orderData) {
+        return this.post('/api/orders', orderData);
+    }
+
+    async updateOrderStatus(orderId, status) {
+        return this.patch(`/api/orders/${orderId}`, { status });
+    }
+
+    // AI API methods
+    async processCustomization(customText) {
+        return this.post('/api/ai/customize', { custom_text: customText });
+    }
+
+    async suggestServerAction(orderId) {
+        return this.post('/api/ai/suggest_action', { order_id: orderId });
+    }
 }
 
 export default new ApiService();
+

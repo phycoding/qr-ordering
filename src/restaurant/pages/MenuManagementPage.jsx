@@ -110,7 +110,18 @@ const MenuManagementPage = () => {
                 <div className="menu-grid">
                     {filteredItems.map(item => (
                         <Card key={item.id} variant="elevated" className="menu-item-card">
-                            <div className="item-image-placeholder">
+                            {item.image ? (
+                                <img
+                                    src={item.image}
+                                    alt={item.name}
+                                    className="item-image"
+                                    onError={(e) => {
+                                        e.target.style.display = 'none';
+                                        e.target.nextSibling.style.display = 'flex';
+                                    }}
+                                />
+                            ) : null}
+                            <div className="item-image-placeholder" style={{ display: item.image ? 'none' : 'flex' }}>
                                 {item.name[0]}
                             </div>
                             <Card.Body>

@@ -73,6 +73,7 @@ class MenuItemCreate(BaseModel):
     preparationTime: int = 15
     tags: Optional[List[str]] = []
     aiRecommended: bool = False
+    image: Optional[str] = None
 
 # Initialize database on startup
 @app.on_event("startup")
@@ -327,7 +328,8 @@ async def get_menu(db: Session = Depends(get_db)):
         "preparationTime": item.preparation_time,
         "tags": json.loads(item.tags) if item.tags else [],
         "nutritionInfo": json.loads(item.nutrition_info) if item.nutrition_info else {},
-        "aiRecommended": item.ai_recommended
+        "aiRecommended": item.ai_recommended,
+        "image": item.image
     } for item in items]
 
 @app.post("/api/menu")

@@ -67,6 +67,11 @@ const OrderTrackingPage = () => {
     ];
 
     const getEstimatedTime = () => {
+        // Add null check for order.items
+        if (!order.items || order.items.length === 0) {
+            return 'Calculating...';
+        }
+
         const totalPrepTime = order.items.reduce((sum, item) => sum + (item.preparationTime || 15), 0);
         const avgPrepTime = Math.ceil(totalPrepTime / order.items.length);
 
